@@ -42,8 +42,7 @@ public class MachineGun : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Attack()
     {
         if(this.transform.parent.tag=="Player")
         {
@@ -76,35 +75,30 @@ public class MachineGun : MonoBehaviour
             }  
         }
         else
-        {
-            Enemy.States state = new Enemy.States();
-            state= transform.parent.GetComponent<Enemy>().GetState();
-            if (state == Enemy.States.Attack)
+        { 
+            for (int i = 0; i < TotalBullets; i++)
             {
-                for (int i = 0; i < TotalBullets; i++)
+                if (!Bullet[i].activeSelf)
                 {
-                    if (!Bullet[i].activeSelf)
+                    if (Timer >= BulletCooldown)
                     {
-                        if (Timer >= BulletCooldown)
-                        {
-                            Bullet[i].SetActive(true);
-                            Bullet[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
-                            Bullet[i].transform.position = transform.position;
-                            Bullet[i].GetComponent<Rigidbody>().AddForce(transform.parent.forward * BulletSpeed, ForceMode.VelocityChange);
-                            Timer = 0;
-                            BulletLifeTimer[i] = 0;
-                        }
-                    }
-                    else
-                    {
-                        BulletLifeTimer[i] += Time.deltaTime;
-                        if(BulletLifeTimer[i]>=BulletLifeTime)
-                        {
-                            Bullet[i].SetActive(false);
-                        }
+                        Bullet[i].SetActive(true);
+                        Bullet[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                        Bullet[i].transform.position = transform.position;
+                        Bullet[i].GetComponent<Rigidbody>().AddForce(transform.parent.forward * BulletSpeed, ForceMode.VelocityChange);
+                        Timer = 0;
+                        BulletLifeTimer[i] = 0;
                     }
                 }
-            }
+                else
+                {
+                    BulletLifeTimer[i] += Time.deltaTime;
+                    if(BulletLifeTimer[i]>=BulletLifeTime)
+                    {
+                        Bullet[i].SetActive(false);
+                    }
+                }
+            }  
         }
         Timer += Time.deltaTime;
     }

@@ -18,7 +18,9 @@ public class SpaceShip : MonoBehaviour
     float InputYaw;
     float Throttle;
     [SerializeField]
-    GameObject Explosion;
+    GameObject ExplosionPrefab;
+    private MachineGun Gun;
+    private int Health;
 
     void Awake()
     {
@@ -28,22 +30,32 @@ public class SpaceShip : MonoBehaviour
         RollRate = -70;
         YawRate = 70;
         Physics.gravity = new Vector3(0f,-91.8f, 0f);
+        Gun = GetComponentInChildren<MachineGun>();
+        Health = 100;
     }
 
     private void FixedUpdate()
     {
-        GetInput(ref InputPitch, ref InputRoll, ref InputYaw, ref Throttle);
+        if (Health > 0)
+        {
+            GetInput(ref InputPitch, ref InputRoll, ref InputYaw, ref Throttle);
 
-        rigi.AddRelativeForce(new Vector3(0, 0, SpeedZ*Throttle),ForceMode.Force);
-
-        Debug.Log(rigi.velocity.sqrMagnitude);
-        Debug.DrawRay(transform.position, transform.forward * 10);
+            rigi.AddRelativeForce(new Vector3(0, 0, SpeedZ * Throttle), ForceMode.Force);
+        }
     }
 
     private void Update()
     {
-        GetInput(ref InputPitch, ref InputRoll, ref InputYaw, ref Throttle);
-        transform.Rotate(InputPitch * PitchRate * Time.deltaTime, InputYaw * YawRate * Time.deltaTime, InputRoll * RollRate * Time.deltaTime, Space.Self);
+        if(Health<=0)
+        {
+            Explode();
+        }
+        else
+        {
+            GetInput(ref InputPitch, ref InputRoll, ref InputYaw, ref Throttle);
+            transform.Rotate(InputPitch * PitchRate * Time.deltaTime, InputYaw * YawRate * Time.deltaTime, InputRoll * RollRate * Time.deltaTime, Space.Self);
+            Gun.Attack();
+        }
     }
 
     void GetInput(ref float InputPitch, ref float InputRoll, ref float InputYaw, ref float Throttle)
@@ -86,34 +98,30 @@ public class SpaceShip : MonoBehaviour
         
     }
 
+    void Explode()
+    {
+        Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
+        CameraManager.Instance.SwitchToExplosionCamera(transform.position);
+        this.gameObject.SetActive(false);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (LayerMask.LayerToName(other.gameObject.layer) == "Floor")
         {
-            rigi.useGravity = false;
-            rigi.isKinematic = true;
-            Explosion.SetActive(true);
-            CameraManager.Instance.SwitchToExplosionCamera(transform.position);
-            //this.gameObject.SetActive(false);
+            Health = 0;
         }
+
+        if(other.tag=="EnemyBullet")
+        {
+            Health -= 50;
+        }
+
+        if(other.tag=="Enemy")
+        {
+            Health = 0;
+        }
+        Debug.Log("Health: " + Health);
     }
 
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    if(LayerMask.LayerToName(collision.gameObject.layer)=="Floor")
-    //    {
-    //        rigi.useGravity = false;
-    //        rigi.isKinematic = true;
-    //        Explosion.SetActive(true);
-
-    //    }
-    //}
-
-    //private void OnCollisionExit(Collision collision)
-    //{
-    //    if (LayerMask.LayerToName(collision.gameObject.layer) == "Floor")
-    //    {
-    //        rigi.useGravity = true;
-    //    }
-    //}
 }

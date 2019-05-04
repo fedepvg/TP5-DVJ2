@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
 {
     public enum States
     {
-        Idle, Chase, Attack, Last,
+        Idle, Attack, Escape, Last,
     }
 
     [SerializeField]
@@ -19,13 +19,18 @@ public class Enemy : MonoBehaviour
     private float ChaseDistance;
     private Rigidbody rigi;
     public Transform PlayerPos;
+    private MachineGun Gun;
+    [SerializeField]
+    private float EscapeDistance;
 
     private void Awake()
     {
         rigi = GetComponent<Rigidbody>();
-        Speed = 100000f;
+        Speed = 60000f;
         RotationRate = 700f;
-        ChaseDistance = 500f;
+        ChaseDistance = 300f;
+        EscapeDistance = 70f;
+        Gun = GetComponentInChildren<MachineGun>();
     }
 
     void Update()
@@ -36,12 +41,13 @@ public class Enemy : MonoBehaviour
             case States.Idle:
 
                 break;
-            case States.Chase:
-                SetRotation();
-                rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
-                break;
             case States.Attack:
                 SetRotation();
+                rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
+                Gun.Attack();
+                break;
+            case States.Escape:
+                SetRotation(PlayerPos.rotation);
                 rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
                 break;
         }
@@ -49,15 +55,19 @@ public class Enemy : MonoBehaviour
 
     void CheckState()
     {
-        if(Vector3.Distance(transform.position,PlayerPos.position)<ChaseDistance)
+        if(Vector3.Distance(transform.position, PlayerPos.position) < EscapeDistance)
         {
-            if(GetTargetAhead())
+            EnemyState = States.Escape;
+        }
+        else if(Vector3.Distance(transform.position, PlayerPos.position) < ChaseDistance)
+        {
+            if (GetTargetAhead())
             {
                 EnemyState = States.Attack;
             }
             else
             {
-                EnemyState = States.Chase;
+                EnemyState = States.Escape;
             }
         }
         else
@@ -85,6 +95,11 @@ public class Enemy : MonoBehaviour
         Quaternion q01 = Quaternion.identity;
         q01.SetLookRotation(PlayerPos.position - transform.position, Vector3.up);
         transform.rotation = q01;
+    }
+
+    void SetRotation(Quaternion rot)
+    {
+        transform.rotation = rot;
     }
 
     public States GetState()

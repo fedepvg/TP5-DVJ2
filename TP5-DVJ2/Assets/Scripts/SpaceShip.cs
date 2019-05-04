@@ -17,9 +17,9 @@ public class SpaceShip : MonoBehaviour
     float InputRoll;
     float InputYaw;
     float Throttle;
-    float BaseLinearForce;
-    Vector2 MoveInput;
-    Vector3 MoveDir = Vector3.zero;
+    [SerializeField]
+    GameObject Explosion;
+
     void Awake()
     {
         rigi = GetComponentInParent<Rigidbody>();
@@ -27,7 +27,6 @@ public class SpaceShip : MonoBehaviour
         PitchRate = 70;
         RollRate = -70;
         YawRate = 70;
-        BaseLinearForce = 300f;
         Physics.gravity = new Vector3(0f,-91.8f, 0f);
     }
 
@@ -49,7 +48,6 @@ public class SpaceShip : MonoBehaviour
 
     void GetInput(ref float InputPitch, ref float InputRoll, ref float InputYaw, ref float Throttle)
     {
-        //Throttle = Input.GetAxis("Vertical");
         InputYaw = Input.GetAxis("Horizontal");
 
         Vector3 mousePos = Input.mousePosition;
@@ -88,19 +86,34 @@ public class SpaceShip : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if(LayerMask.LayerToName(collision.gameObject.layer)=="Floor")
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Floor")
         {
             rigi.useGravity = false;
+            rigi.isKinematic = true;
+            Explosion.SetActive(true);
+            CameraManager.Instance.SwitchToExplosionCamera(transform.position);
+            //this.gameObject.SetActive(false);
         }
     }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        if (LayerMask.LayerToName(collision.gameObject.layer) == "Floor")
-        {
-            rigi.useGravity = true;
-        }
-    }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if(LayerMask.LayerToName(collision.gameObject.layer)=="Floor")
+    //    {
+    //        rigi.useGravity = false;
+    //        rigi.isKinematic = true;
+    //        Explosion.SetActive(true);
+
+    //    }
+    //}
+
+    //private void OnCollisionExit(Collision collision)
+    //{
+    //    if (LayerMask.LayerToName(collision.gameObject.layer) == "Floor")
+    //    {
+    //        rigi.useGravity = true;
+    //    }
+    //}
 }

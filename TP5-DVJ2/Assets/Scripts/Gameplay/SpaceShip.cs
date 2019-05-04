@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpaceShip : MonoBehaviour
+public class SpaceShip : ShipBase
 {
     private Rigidbody rigi;
     [SerializeField]
@@ -17,10 +17,9 @@ public class SpaceShip : MonoBehaviour
     float InputRoll;
     float InputYaw;
     float Throttle;
-    [SerializeField]
-    GameObject ExplosionPrefab;
     private MachineGun Gun;
-    private int Health;
+    int Fuel;
+    float FuelTimer;
 
     void Awake()
     {
@@ -32,11 +31,13 @@ public class SpaceShip : MonoBehaviour
         Physics.gravity = new Vector3(0f,-91.8f, 0f);
         Gun = GetComponentInChildren<MachineGun>();
         Health = 100;
+        FuelTimer = 0;
+        Fuel = 100;
     }
 
     private void FixedUpdate()
     {
-        if (Health > 0)
+        if (Health > 0 && Fuel>0)
         {
             GetInput(ref InputPitch, ref InputRoll, ref InputYaw, ref Throttle);
 
@@ -48,27 +49,36 @@ public class SpaceShip : MonoBehaviour
     {
         if(Health<=0)
         {
+            CameraManager.Instance.SwitchToExplosionCamera(transform.position);
             Explode();
+            GameManager.Instance.GameOver();
         }
         else
         {
             GetInput(ref InputPitch, ref InputRoll, ref InputYaw, ref Throttle);
             transform.Rotate(InputPitch * PitchRate * Time.deltaTime, InputYaw * YawRate * Time.deltaTime, InputRoll * RollRate * Time.deltaTime, Space.Self);
             Gun.Attack();
+            FuelTimer += Time.deltaTime;
+            if(FuelTimer>1)
+            {
+                FuelTimer = 0;
+                Fuel--;
+            }
+            Debug.Log(Fuel);
         }
     }
 
     void GetInput(ref float InputPitch, ref float InputRoll, ref float InputYaw, ref float Throttle)
     {
-        InputYaw = Input.GetAxis("Horizontal");
+        InputRoll = Input.GetAxis("Horizontal");
 
         Vector3 mousePos = Input.mousePosition;
 
         InputPitch = (mousePos.y - (Screen.height * 0.5f)) / (Screen.height * 0.5f);
-        InputRoll = (mousePos.x - (Screen.width * 0.5f)) / (Screen.width * 0.5f);
+        InputYaw = (mousePos.x - (Screen.width * 0.5f)) / (Screen.width * 0.5f);
 
         InputPitch = -Mathf.Clamp(InputPitch, -1.0f, 1.0f);
-        InputRoll = Mathf.Clamp(InputRoll, -1.0f, 1.0f);
+        InputYaw = Mathf.Clamp(InputYaw, -1.0f, 1.0f);
 
         bool AccInput;
         float Target = Throttle;
@@ -96,14 +106,7 @@ public class SpaceShip : MonoBehaviour
             Throttle = Mathf.MoveTowards(Throttle, Target, Time.deltaTime * 0.25f);
         }
         
-    }
-
-    void Explode()
-    {
-        Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
-        CameraManager.Instance.SwitchToExplosionCamera(transform.position);
-        this.gameObject.SetActive(false);
-    }
+    }    
 
     private void OnTriggerEnter(Collider other)
     {
@@ -124,4 +127,13 @@ public class SpaceShip : MonoBehaviour
         Debug.Log("Health: " + Health);
     }
 
+    public int GetFuel()
+    {
+        return Fuel;
+    }
+
+    public int GetHealth()
+    {
+        return Health;
+    }
 }

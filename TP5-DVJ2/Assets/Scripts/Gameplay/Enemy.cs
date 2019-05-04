@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : ShipBase
 {
     public enum States
     {
@@ -31,26 +31,36 @@ public class Enemy : MonoBehaviour
         ChaseDistance = 300f;
         EscapeDistance = 70f;
         Gun = GetComponentInChildren<MachineGun>();
+        Health = 100;
     }
 
     void Update()
     {
-        CheckState();
-        switch (EnemyState)
+        if(Health>0)
         {
-            case States.Idle:
+            CheckState();
+            switch (EnemyState)
+            {
+                case States.Idle:
 
-                break;
-            case States.Attack:
-                SetRotation();
-                rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
-                Gun.Attack();
-                break;
-            case States.Escape:
-                SetRotation(PlayerPos.rotation);
-                rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
-                break;
+                    break;
+                case States.Attack:
+                    SetRotation();
+                    rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
+                    Gun.Attack();
+                    break;
+                case States.Escape:
+                    SetRotation(PlayerPos.rotation);
+                    rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
+                    break;
+            }
         }
+        else
+        {
+            GameManager.Instance.AddEnemyDawn();
+            Explode();
+        }
+        
     }
 
     void CheckState()
@@ -105,5 +115,24 @@ public class Enemy : MonoBehaviour
     public States GetState()
     {
         return EnemyState;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Floor")
+        {
+            Health = 0;
+        }
+
+        if (other.tag == "PlayerBullet")
+        {
+            Health -= 50;
+        }
+
+        if (other.tag == "Player")
+        {
+            Health = 0;
+        }
+        Debug.Log("Health: " + Health);
     }
 }

@@ -123,11 +123,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f831e2f3f9cccff4b8dbe3fc42cc9397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ExplosionPrefab: {fileID: 0}
   EnemyState: 0
   Speed: 10000
   RotationRate: 70
   ChaseDistance: 50
   PlayerPos: {fileID: 0}
+  EscapeDistance: 0
 --- !u!1001 &4342810706665362201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -294,7 +296,7 @@ PrefabInstance:
     - target: {fileID: 8514234938692788199, guid: 154747adc507b1843b0996c80c6c8613,
         type: 3}
       propertyPath: BulletSpeed
-      value: 200
+      value: 700
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 154747adc507b1843b0996c80c6c8613, type: 3}

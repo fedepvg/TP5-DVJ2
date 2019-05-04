@@ -5,6 +5,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
+    int enemiesDawn;
+    int score;
+    bool inGame;
 
     private void Awake()
     {
@@ -15,6 +18,8 @@ public class GameManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
+        enemiesDawn = 0;
+        inGame = true;
     }
 
     public static GameManager Instance
@@ -24,6 +29,28 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        inGame = false;
         //SceneManager.LoadScene("EndGameScene");
+    }
+
+    public void AddEnemyDawn()
+    {
+        enemiesDawn++;
+        score += 100;
+    }
+
+    public int EnemiesDawn
+    {
+        get { return enemiesDawn; }
+    }
+
+    public int Score
+    {
+        get { return score; }
+    }
+
+    public bool InGame
+    {
+        get { return inGame; }
     }
 }

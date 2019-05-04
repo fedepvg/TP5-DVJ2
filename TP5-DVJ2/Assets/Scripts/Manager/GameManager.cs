@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class GameManager : MonoBehaviour
     int enemiesDawn;
     int score;
     bool inGame;
+    float GOTimer;
+    const float TimeInGO=5;
 
     private void Awake()
     {
@@ -20,6 +23,15 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         enemiesDawn = 0;
         inGame = true;
+        GOTimer = 0;
+    }
+
+    private void Update()
+    {
+        if(!InGame)
+        {
+            GameOver();
+        }
     }
 
     public static GameManager Instance
@@ -30,7 +42,13 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         inGame = false;
-        //SceneManager.LoadScene("EndGameScene");
+        GOTimer += Time.deltaTime;
+        if(GOTimer>TimeInGO)
+        {
+            inGame = true;
+            SceneManager.LoadScene("EndGameScene");
+            GOTimer = 0;
+        }
     }
 
     public void AddEnemyDawn()

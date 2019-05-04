@@ -75,5 +75,13 @@ public class UIManager : MonoBehaviour
                 Crosshair.SetActive(false);
             }
         }
+        else
+        {
+            if (!Crosshair.activeSelf)
+            {
+                Crosshair.SetActive(true);
+                GameOverText.SetActive(false);
+            }
+        }
     }
 }

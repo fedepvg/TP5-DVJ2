@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4342810706848019226}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -117.31, y: 580.327, z: 246}
-  m_LocalScale: {x: 22, y: 22, z: 22}
+  m_LocalScale: {x: 30, y: 30, z: 30}
   m_Children:
   - {fileID: 4342810706665228691}
   - {fileID: 316324487892157768}
@@ -123,12 +123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f831e2f3f9cccff4b8dbe3fc42cc9397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExplosionPrefab: {fileID: 0}
+  ExplosionPrefab: {fileID: 100010, guid: 031d08f52af1daa4f929b85221519426, type: 3}
   EnemyState: 0
   Speed: 10000
   RotationRate: 70
   ChaseDistance: 50
-  PlayerPos: {fileID: 0}
+  Player: {fileID: 0}
   EscapeDistance: 0
 --- !u!1001 &4342810706665362201
 PrefabInstance:
@@ -291,7 +291,7 @@ PrefabInstance:
     - target: {fileID: 8514234938692788199, guid: 154747adc507b1843b0996c80c6c8613,
         type: 3}
       propertyPath: BulletCooldown
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8514234938692788199, guid: 154747adc507b1843b0996c80c6c8613,
         type: 3}

@@ -24,13 +24,13 @@ public class SpaceShip : ShipBase
     void Awake()
     {
         rigi = GetComponentInParent<Rigidbody>();
-        SpeedZ = 6000f;
+        SpeedZ = 8000f;
         PitchRate = 70;
         RollRate = -70;
         YawRate = 70;
         Physics.gravity = new Vector3(0f,-91.8f, 0f);
         Gun = GetComponentInChildren<MachineGun>();
-        Health = 100;
+        Health = 200;
         FuelTimer = 0;
         Fuel = 100;
     }
@@ -110,7 +110,7 @@ public class SpaceShip : ShipBase
 
     private void OnTriggerEnter(Collider other)
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Floor")
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Floor" || LayerMask.LayerToName(other.gameObject.layer) == "Water")
         {
             Health = 0;
         }

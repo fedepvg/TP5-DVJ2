@@ -16,9 +16,9 @@ public class Enemy : ShipBase
     [SerializeField]
     private float RotationRate;
     [SerializeField]
-    private float ChaseDistance;
+    private float AttackDistance;
     private Rigidbody rigi;
-    public Transform PlayerPos;
+    public Transform Player;
     private MachineGun Gun;
     [SerializeField]
     private float EscapeDistance;
@@ -28,10 +28,15 @@ public class Enemy : ShipBase
         rigi = GetComponent<Rigidbody>();
         Speed = 60000f;
         RotationRate = 700f;
-        ChaseDistance = 300f;
-        EscapeDistance = 70f;
+        AttackDistance = 200f;
+        EscapeDistance = 100f;
         Gun = GetComponentInChildren<MachineGun>();
         Health = 100;
+        if(!Player)
+        {
+            GameObject go = GameObject.Find("Player");
+            Player = go.transform;
+        }
     }
 
     void Update()
@@ -50,7 +55,7 @@ public class Enemy : ShipBase
                     Gun.Attack();
                     break;
                 case States.Escape:
-                    SetRotation(PlayerPos.rotation);
+                    SetRotation(Player.rotation);
                     rigi.AddRelativeForce(0, 0, Speed * Time.deltaTime, ForceMode.Force);
                     break;
             }
@@ -65,11 +70,11 @@ public class Enemy : ShipBase
 
     void CheckState()
     {
-        if(Vector3.Distance(transform.position, PlayerPos.position) < EscapeDistance)
+        if(Vector3.Distance(transform.position, Player.position) < EscapeDistance)
         {
             EnemyState = States.Escape;
         }
-        else if(Vector3.Distance(transform.position, PlayerPos.position) < ChaseDistance)
+        else if(Vector3.Distance(transform.position, Player.position) < AttackDistance)
         {
             if (GetTargetAhead())
             {
@@ -88,7 +93,7 @@ public class Enemy : ShipBase
 
     bool GetTargetAhead()
     {
-        Vector3 heading = PlayerPos.position - transform.position;
+        Vector3 heading = Player.position - transform.position;
         float dot = Vector3.Dot(heading, transform.forward);
         if(dot<=0)
         {
@@ -103,7 +108,7 @@ public class Enemy : ShipBase
     void SetRotation()
     {
         Quaternion q01 = Quaternion.identity;
-        q01.SetLookRotation(PlayerPos.position - transform.position, Vector3.up);
+        q01.SetLookRotation(Player.position - transform.position, Vector3.up);
         transform.rotation = q01;
     }
 

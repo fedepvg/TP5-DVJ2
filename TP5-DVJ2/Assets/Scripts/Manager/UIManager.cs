@@ -27,10 +27,22 @@ public class UIManager : MonoBehaviour
     private GameObject GameOverText;
     [SerializeField]
     private GameObject Crosshair;
+    [SerializeField]
+    private GameObject Level;
+    bool SceneLoading;
+    float LoadingTimer;
+    const int LevelScreenTime = 2;
 
     private void Awake()
     {
         PlayerShip = Player.GetComponent<SpaceShip>();
+        SceneLoading = true;
+        LoadingTimer = 0;
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.SetUIManager(this);
     }
 
     private void Update()
@@ -83,5 +95,28 @@ public class UIManager : MonoBehaviour
                 GameOverText.SetActive(false);
             }
         }
+
+        if(SceneLoading)
+        {
+            LoadingTimer += Time.deltaTime;
+            if(LoadingTimer<LevelScreenTime)
+            {
+                Level.SetActive(true);
+                Crosshair.SetActive(false);
+            }
+            else
+            {
+                Level.SetActive(false);
+                Crosshair.SetActive(true);
+                LoadingTimer = 0;
+                SceneLoading = false;
+            }
+            
+        }
+    }
+
+    public void SetSceneLoading(bool s)
+    {
+        SceneLoading = s;
     }
 }

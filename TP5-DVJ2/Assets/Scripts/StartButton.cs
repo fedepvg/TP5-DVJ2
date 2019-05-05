@@ -19,6 +19,12 @@ public class StartButton : MonoBehaviour
 
     private void OnClick()
     {
+        if(GameManager.Instance)
+        {
+            GameManager.Instance.Score = 0;
+            GameManager.Instance.EnemiesDawn = 0;
+            GameManager.Instance.SceneLoading = true;
+        }
         SceneManager.LoadScene("Level1");
     }
 }

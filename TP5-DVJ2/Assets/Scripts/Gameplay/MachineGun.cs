@@ -57,6 +57,7 @@ public class MachineGun : MonoBehaviour
                             Bullet[i].SetActive(true);
                             Bullet[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
                             Bullet[i].transform.position = transform.position;
+                            Bullet[i].transform.rotation = Quaternion.identity;
                             Bullet[i].GetComponent<Rigidbody>().AddForce(transform.parent.forward*BulletSpeed, ForceMode.VelocityChange);
                             Timer = 0;
                             BulletLifeTimer[i] = 0;
@@ -85,6 +86,7 @@ public class MachineGun : MonoBehaviour
                         Bullet[i].SetActive(true);
                         Bullet[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
                         Bullet[i].transform.position = transform.position;
+                        Bullet[i].transform.rotation = Quaternion.identity;
                         Bullet[i].GetComponent<Rigidbody>().AddForce(transform.parent.forward * BulletSpeed, ForceMode.VelocityChange);
                         Timer = 0;
                         BulletLifeTimer[i] = 0;
